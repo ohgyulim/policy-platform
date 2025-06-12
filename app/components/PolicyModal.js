@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import Pagination from "./Pagination";
 
 const policies = [
   "청년수당",
@@ -47,11 +48,16 @@ export default function PolicyModal({ clickPolicyModal, setSelectedPolicies }) {
   return (
     <div
       className="fixed inset-0 z-50 bg-black/30 flex justify-center items-center"
-      onClick={clickPolicyModal}
+      onClick={(e) => {
+        // 클릭한 대상이 '배경 그 자체'일 때만 닫기
+        if (e.target === e.currentTarget) {
+          clickPolicyModal();
+        }
+      }}
     >
       <div
         className="relative bg-white w-full max-w-md mx-4 rounded-2xl shadow-lg p-8"
-        onClick={(e) => e.stopPropagation()}
+        // onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기(X) 버튼 */}
         <button
@@ -61,10 +67,8 @@ export default function PolicyModal({ clickPolicyModal, setSelectedPolicies }) {
         >
           <IoClose size={28} />
         </button>
-
         {/* 타이틀 */}
         <h2 className="text-xl font-bold text-gray-900 mb-4">정책 검색</h2>
-
         {/* 검색창 */}
         <div className="mb-3">
           <input
@@ -78,7 +82,6 @@ export default function PolicyModal({ clickPolicyModal, setSelectedPolicies }) {
             className="w-full rounded-lg border border-gray-200 px-4 py-2 bg-gray-50 focus:outline-none focus:border-blue-400 text-base"
           />
         </div>
-
         {/* 선택된 정책(태그) */}
         {selected.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-2">
@@ -100,7 +103,6 @@ export default function PolicyModal({ clickPolicyModal, setSelectedPolicies }) {
             ))}
           </div>
         )}
-
         {/* 정책 리스트 */}
         <ul className="mb-6">
           {paged.map((policy) => (
@@ -122,39 +124,12 @@ export default function PolicyModal({ clickPolicyModal, setSelectedPolicies }) {
             </li>
           )}
         </ul>
-
-        {/* 페이지네이션 */}
-        <div className="flex justify-center items-center gap-2 mb-6">
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100"
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-          >
-            &laquo;
-          </button>
-          {[...Array(totalPage)].map((_, idx) => (
-            <button
-              key={idx}
-              className={`w-8 h-8 flex items-center justify-center rounded ${
-                page === idx + 1
-                  ? "bg-blue-600 text-white"
-                  : "border border-gray-200 text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => setPage(idx + 1)}
-            >
-              {idx + 1}
-            </button>
-          ))}
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-100"
-            disabled={page === totalPage || totalPage === 0}
-            onClick={() => setPage((p) => Math.min(totalPage, p + 1))}
-          >
-            &raquo;
-          </button>
-        </div>
-
-        {/* 완료 버튼 */}
+        <Pagination
+          totalPage={totalPage}
+          currentPage={page}
+          onPageChange={setPage}
+        />
+        ;{/* 완료 버튼 */}
         <button
           className="cursor-pointer w-full py-3 rounded-lg bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition"
           onClick={handleComplete}
