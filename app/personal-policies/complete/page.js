@@ -83,8 +83,8 @@ export default function Complete() {
   return (
     <div>
       <SearchNav></SearchNav>
-      <section className="p-10 rounded-2xl max-w-5xl mx-auto pb-30">
-        <div className="flex gap-[20px] flex-wrap">
+      <section className="rounded-2xl max-w-5xl mx-auto pb-30">
+        <div className="flex gap-[20px] flex-wrap justify-center">
           {paged.map((data, i) => {
             return (
               <PolicyCard
@@ -96,11 +96,13 @@ export default function Complete() {
           })}
         </div>
 
-        <Pagination
-          totalPage={totalPage}
-          currentPage={page}
-          onPageChange={setPage}
-        ></Pagination>
+        <div className="mt-10">
+          <Pagination
+            totalPage={totalPage}
+            currentPage={page}
+            onPageChange={setPage}
+          ></Pagination>
+        </div>
       </section>
     </div>
   );
