@@ -17,11 +17,7 @@ export default function PersonalPolicies() {
   const clickPolicyModal = () => setShowPolicyModal((prev) => !prev);
 
   return (
-    <div className="bg-gray-50 min-h-screen py-16 px-4">
-      <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
-        맞춤 정책 보기
-      </h2>
-
+    <div>
       <section className="bg-white p-10 rounded-2xl shadow-md max-w-2xl mx-auto">
         <h3 className="text-xl font-semibold text-gray-800 mb-8 text-center">
           맞춤 정책 추천을 위해 정보를 입력해주세요
