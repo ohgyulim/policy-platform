@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function PersonalPolicies() {
   const router = useRouter();
+
   // 상태 저장값
   const [birthDate, setBirthDate] = useState("");
   const [showSeoulModal, setShowSeoulModal] = useState(false);
