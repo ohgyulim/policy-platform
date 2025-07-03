@@ -16,6 +16,10 @@ export default function PersonalPolicies() {
   const clickSeoulModal = () => setShowSeoulModal((prev) => !prev);
   const clickPolicyModal = () => setShowPolicyModal((prev) => !prev);
 
+  // 나이 입력: 만 19 ~ 만 42로 제한
+  const minDate = calculateDateYearsAgo(42);
+  const maxDate = calculateDateYearsAgo(19);
+
   return (
     <div>
       <section className="bg-white p-10 rounded-2xl shadow-md max-w-2xl mx-auto">
@@ -34,6 +38,8 @@ export default function PersonalPolicies() {
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm bg-gray-50"
+              min={minDate}
+              max={maxDate}
             />
           </div>
 
@@ -136,4 +142,11 @@ export default function PersonalPolicies() {
       </section>
     </div>
   );
+}
+
+function calculateDateYearsAgo(years) {
+  const currentDate = new Date();
+  return new Date(currentDate.setFullYear(currentDate.getFullYear() - years))
+    .toISOString()
+    .split("T")[0];
 }
