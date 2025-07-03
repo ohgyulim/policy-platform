@@ -4,8 +4,12 @@ import { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import SeoulModal from "../components/SeoulModal";
 import PolicyModal from "../components/PolicyModal";
+import { useRouter } from "next/navigation";
 
 export default function PersonalPolicies() {
+  const router = useRouter();
+
+  // 상태 저장값
   const [birthDate, setBirthDate] = useState("");
   const [showSeoulModal, setShowSeoulModal] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -13,15 +17,38 @@ export default function PersonalPolicies() {
   const [showPolicyModal, setShowPolicyModal] = useState(false);
   const [selectedPolicies, setSelectedPolicies] = useState([]);
 
+  // enum으로 처리
+  const incomeOptions = [
+    { label: "150% 이하", value: "below_150" },
+    { label: "150% 이상", value: "above_150" },
+    { label: "모름", value: "unknown" },
+  ];
+
+  // 함수
   const clickSeoulModal = () => setShowSeoulModal((prev) => !prev);
   const clickPolicyModal = () => setShowPolicyModal((prev) => !prev);
+  const handleClick = () => {
+    if (birthDate == "" || selectedDistrict == "" || incomeLevel == "") {
+      alert("값을 채워주세요");
+      return;
+    }
+
+    const data = {
+      birthDate,
+      selectedDistrict,
+      incomeLevel,
+      selectedPolicies,
+    };
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    router.push("/personal-policies/complete");
+  };
+
+  // 나이 입력: 만 19 ~ 만 42로 제한
+  const minDate = calculateDateYearsAgo(42);
+  const maxDate = calculateDateYearsAgo(19);
 
   return (
-    <div className="bg-gray-50 min-h-screen py-16 px-4">
-      <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
-        맞춤 정책 보기
-      </h2>
-
+    <div>
       <section className="bg-white p-10 rounded-2xl shadow-md max-w-2xl mx-auto">
         <h3 className="text-xl font-semibold text-gray-800 mb-8 text-center">
           맞춤 정책 추천을 위해 정보를 입력해주세요
@@ -38,6 +65,8 @@ export default function PersonalPolicies() {
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm bg-gray-50"
+              min={minDate}
+              max={maxDate}
             />
           </div>
 
@@ -67,18 +96,18 @@ export default function PersonalPolicies() {
               중위소득 수준
             </label>
             <div className="flex gap-3">
-              {["150% 이하", "150% 이상", "모름"].map((option) => (
+              {incomeOptions.map(({ label, value }) => (
                 <button
-                  key={option}
+                  key={value}
                   type="button"
-                  onClick={() => setIncomeLevel(option)}
+                  onClick={() => setIncomeLevel(value)}
                   className={`flex-1 px-4 py-2 rounded-md border text-sm transition ${
-                    incomeLevel === option
+                    incomeLevel === value
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-gray-100 text-gray-600 border-gray-300"
                   }`}
                 >
-                  {option}
+                  {label}
                 </button>
               ))}
             </div>
@@ -134,10 +163,21 @@ export default function PersonalPolicies() {
         </div>
 
         {/* 저장 버튼 */}
-        <button className="w-full mt-10 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold py-3 rounded-md transition">
+        <button
+          className="w-full mt-10 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold py-3 rounded-md transition"
+          type="button"
+          onClick={handleClick}
+        >
           저장하고 추천 받기
         </button>
       </section>
     </div>
   );
+}
+
+function calculateDateYearsAgo(years) {
+  const currentDate = new Date();
+  return new Date(currentDate.setFullYear(currentDate.getFullYear() - years))
+    .toISOString()
+    .split("T")[0];
 }

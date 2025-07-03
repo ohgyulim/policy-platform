@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   // 임시 데이터
+  // Todo: 백엔드 API에 요청
   const initialData = [
     {
       index: 1,
