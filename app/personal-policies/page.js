@@ -4,9 +4,10 @@ import { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import SeoulModal from "../components/SeoulModal";
 import PolicyModal from "../components/PolicyModal";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function PersonalPolicies() {
+  const router = useRouter();
   // 상태 저장값
   const [birthDate, setBirthDate] = useState("");
   const [showSeoulModal, setShowSeoulModal] = useState(false);
@@ -15,6 +16,7 @@ export default function PersonalPolicies() {
   const [showPolicyModal, setShowPolicyModal] = useState(false);
   const [selectedPolicies, setSelectedPolicies] = useState([]);
 
+  // enum으로 처리
   const incomeOptions = [
     { label: "150% 이하", value: "below_150" },
     { label: "150% 이상", value: "above_150" },
@@ -37,6 +39,7 @@ export default function PersonalPolicies() {
       selectedPolicies,
     };
     localStorage.setItem("userInfo", JSON.stringify(data));
+    router.push("/personal-policies/complete");
   };
 
   // 나이 입력: 만 19 ~ 만 42로 제한
