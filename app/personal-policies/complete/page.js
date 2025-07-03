@@ -3,7 +3,8 @@
 import Pagination from "@/app/components/Pagination";
 import PolicyCard from "@/app/components/PolicyCard";
 import SearchNav from "@/app/components/SearchNav";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const PAGE_SIZE = 3;
 
@@ -77,33 +78,76 @@ export default function Complete() {
   ];
 
   // 서버에서 받을 값
-  const totalPage = initialData.length / PAGE_SIZE;
+  // const totalPage = initialData.length / PAGE_SIZE;
   const [page, setPage] = useState(1);
-  const paged = initialData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // const paged = initialData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const currentPage = useMemo(() => {
+    const param = searchParams.get("page");
+    const num = param ? parseInt(param, 10) : 1;
+    return isNaN(num) || num < 1 ? 1 : num;
+  }, [searchParams]);
+
+  const totalPage = Math.ceil(initialData.length / PAGE_SIZE);
+  const paged = initialData.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const handlePageChange = (newPage) => {
+    const newSearch = new URLSearchParams(searchParams);
+    newSearch.set("page", newPage.toString());
+    router.push(`/personal-policies/complete?${newSearch.toString()}`);
+  };
+
   return (
     <div>
-      <SearchNav></SearchNav>
+      <SearchNav />
       <section className="rounded-2xl max-w-5xl mx-auto pb-30">
         <div className="flex gap-[20px] flex-wrap justify-center">
-          {paged.map((data, i) => {
-            return (
-              <PolicyCard
-                className="w-[calc(33.333%-20px)] pt-10"
-                key={i}
-                policyInfo={data}
-              ></PolicyCard>
-            );
-          })}
+          {paged.map((data) => (
+            <PolicyCard
+              className="w-[calc(33.333%-20px)] pt-10"
+              key={data.index}
+              policyInfo={data}
+            />
+          ))}
         </div>
 
         <div className="mt-10">
           <Pagination
             totalPage={totalPage}
-            currentPage={page}
-            onPageChange={setPage}
-          ></Pagination>
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </section>
     </div>
+    // <div>
+    //   <SearchNav></SearchNav>
+    //   <section className="rounded-2xl max-w-5xl mx-auto pb-30">
+    //     <div className="flex gap-[20px] flex-wrap justify-center">
+    //       {paged.map((data, i) => {
+    //         return (
+    //           <PolicyCard
+    //             className="w-[calc(33.333%-20px)] pt-10"
+    //             key={i}
+    //             policyInfo={data}
+    //           ></PolicyCard>
+    //         );
+    //       })}
+    //     </div>
+
+    //     <div className="mt-10">
+    //       <Pagination
+    //         totalPage={totalPage}
+    //         currentPage={page}
+    //         onPageChange={setPage}
+    //       ></Pagination>
+    //     </div>
+    //   </section>
+    // </div>
   );
 }
